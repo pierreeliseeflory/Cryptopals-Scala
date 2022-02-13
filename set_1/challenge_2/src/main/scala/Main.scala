@@ -19,11 +19,10 @@ def xorList(input_1: List[Char], input_2: List[Char]): List[Int] = (input_1, inp
     case (char_1 :: rest_1, Nil) => throw new Exception("List size don't match")
     case (Nil, char_2 :: rest_2) => throw new Exception("List size don't match")
     case (Nil, Nil) => List()
-@main
-def Challenge() : Unit =
+
+@main def Challenge(): Unit =
     val input_1 = readLine().toList
     val input_2 = readLine().toList
 
     for char <- xorList(input_1, input_2) do print(char.toChar) 
     println
-end Challenge

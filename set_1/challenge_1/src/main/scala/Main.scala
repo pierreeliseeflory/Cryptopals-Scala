@@ -45,10 +45,8 @@ def iterateOverList(inputList: List[Char]) : List[Int] = inputList match {
     }
 }
 
-@main
-def Challenge() : Unit =
+@main def Challenge(): Unit =
     val input = readLine().toList
 
     for char <- iterateOverList(input) do print(char.toChar) 
     println
-end Challenge
