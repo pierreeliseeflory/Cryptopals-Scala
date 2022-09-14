@@ -1,36 +1,65 @@
 import scala.io.StdIn.readLine
 
-def ASCIIToHexa = (hex: Char) => hex.toInt match { 
-    case digit if (digit >= 48 && digit < 58) => digit - 48
+/** Translates an ASCII code value to the corresponding hexa value
+   *
+   *  @param hex the ASCII value
+   *  @return the value of the hexa symbol
+   */
+def ASCIIToHexa(hex: Char): Int = hex.toInt match { 
+    case digit  if (digit >= 48 && digit < 58) => digit - 48
     case letter if (letter >= 97 && letter < 103) => letter - 87
-    case _ => throw new Exception("Incorrect hex character")
+    case _ => throw new Exception("Incorrect hex character (ASCII value must be in [48;57] or [97;102].")
 }
 
-def Base64ToASCII (value: Int, padding: Boolean = false) = 
+/** Translates a Base64 value to the corresponding ASCII code value
+   *
+   *  @param base64 the Base64 value
+   *  @param padding a boolean used to differentiate zero-values 
+   *         from padding symbols
+   *  @return the ASCII code of the corresponding Base64 value
+   */
+def Base64ToASCII(base64: Int, padding: Boolean = false): Int = 
     if padding then 
         61
     else
-        value match {
-            case value if (value >= 0 && value < 26) => value + 65
-            case value if (value >= 26 && value < 52) => value + 71
-            case value if (value >= 52 && value < 62) => value - 4 
+        base64 match {
+            case uppercase if (uppercase >= 0  && uppercase < 26) => uppercase + 65
+            case lowercase if (lowercase >= 26 && lowercase < 52) => lowercase + 71
+            case digit     if (digit >= 52 && digit < 62) => digit - 4 
             case 62 => 43
             case 63 => 47
-            case _ => throw new Exception("Incorrect value : 0 <= Base 64 < 64")
+            case _ => throw new Exception("Incorrect value (0 <= Base_64_value < 64)")
 }
 
-def hexaTripletToBase64Couple(value_1: Int, value_2: Int, value_3: Int, padding: Boolean) : (Int, Int)  = {
-    (Base64ToASCII((value_1 << 2) + (value_2 / 4)), Base64ToASCII(((value_2 % 4) << 4) + value_3, padding))
-}
+   
 
+/** Produces Base64 symbols from hexa symbols
+   *
+   *  @param value_1 a hexa symbol
+   *  @param value_2 a hexa symbol
+   *  @param value_3 a hexa symbol
+   *  @param padding a boolean used to differentiate zero-values 
+   *         from padding symbols
+   *  @return a tuple of two Base64 symbols
+   */
 def hexaToBase64(value_1: Char, value_2: Char = '0', value_3: Char = '0', padding: Boolean = false) : (Int, Int) = {
-    hexaTripletToBase64Couple(ASCIIToHexa(value_1), ASCIIToHexa(value_2), ASCIIToHexa(value_3), padding)
+    val hexa_1 = ASCIIToHexa(value_1)
+    val hexa_2 = ASCIIToHexa(value_2)
+    val hexa_3 = ASCIIToHexa(value_3)
+    (Base64ToASCII((hexa_1 << 2) + (hexa_2 / 4)), Base64ToASCII(((hexa_2 % 4) << 4) + hexa_3, padding))
 }
 
-def iterateOverList(inputList: List[Char]) : List[Int] = inputList match {
+/** Translates a list of hexa symbols into a list of Base64 symbols
+   *
+   *  @param inputList a list of hexa symbols
+   *  @param padding a boolean used to differentiate zero-values 
+   *         from padding symbols
+   *  @return a list of Base64 symbols values
+   */
+def iterateTriplesOverList(inputList: List[Char]) : List[Int] = inputList match {
     case x :: y :: z :: rest => {
         val (res_1, res_2) = hexaToBase64(x, y, z)
-        res_1 :: res_2 :: iterateOverList(rest)
+        res_1 :: res_2 :: iterateTriplesOverList(rest)
     }
     case x :: y :: Nil => {
         val (res_1, res_2) = hexaToBase64(x, y)
@@ -45,8 +74,10 @@ def iterateOverList(inputList: List[Char]) : List[Int] = inputList match {
     }
 }
 
-@main def Challenge(): Unit =
+object Challenge_1 extends App {
+    println("Input hexa string :")
     val input = readLine().toList
-
-    for char <- iterateOverList(input) do print(char.toChar) 
+    
+    for char <- iterateTriplesOverList(input) do print(char.toChar) 
     println
+}
