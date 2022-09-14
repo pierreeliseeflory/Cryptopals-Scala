@@ -86,7 +86,7 @@ def countCharacter(input: List[Int], char: Int): Int =
             case _ => countCharacter(rest, char)
         case Nil => 0
 
-@main def Challenge(): Unit =
+object Challenge_4 extends App {
     val input = readLine()
     val source = scala.io.Source.fromFile(input)
     for (line <- source.getLines())
@@ -95,3 +95,4 @@ def countCharacter(input: List[Int], char: Int): Int =
             for chars <- xorInput(line.toList, byte) do print(chars.toChar)
             println
     source.close()
+}

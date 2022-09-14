@@ -23,8 +23,9 @@ def rotateKey(input: List[Char], key: List[Char]): List[Int] = input match
         case _ => throw new Exception("Key error")
     case Nil => List()
 
-@main def Challenge(): Unit =
+object Challenge_5 extends App {
     val key = readLine().toList
     val input = (new TermLines).toVector.mkString("\n").toList
     for elem <- rotateKey(input, key) do print(elem.toChar)
     println
+}

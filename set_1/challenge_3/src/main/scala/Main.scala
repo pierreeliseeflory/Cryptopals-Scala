@@ -79,9 +79,10 @@ def countCharacter(input: List[Int], char: Int): Int =
             case x if x == char || (x == char - 32 && char >= 97 && char < 123)  => countCharacter(rest, char) + 1
             case _ => countCharacter(rest, char)
         case Nil => 0
-
-@main def Challenge(): Unit =
+        
+object Challenge_3 extends App {
     val input = readLine().toList
     val byte = breakSingleByteXORCipher(input)
     for chars <- xorInput(input, byte) do print(chars.toChar)
     println
+}
