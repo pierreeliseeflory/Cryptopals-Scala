@@ -1,29 +1,53 @@
 import scala.io.StdIn.readLine
-import scala.collection.mutable.ListBuffer
 
-def ASCIIToHexa = (hex: Char) => hex.toInt match 
-    case digit if (digit >= 48 && digit < 58) => digit - 48
-    case letter if (letter >= 97 && letter < 103) => letter - 87
-    case _ => throw new Exception("Incorrect hex character")
+/** Translates an ASCII character to the corresponding hexa value
+   *
+   *  @param hex_char an ASCII character 
+   *  @return an hexa value
+   */
+def ASCIIToHexa(hex_char: Char): Int = hex_char.toInt match 
+    case digit  if 48 to 57 contains digit => digit - 48
+    case letter if 97 to 102 contains letter => letter - 87
+    case _ => throw new Exception("Incorrect hex character (ASCII value must be in [48;57] or [97;102].")
 
-def HexaToASCII = (hex_value: Int) => hex_value match
-    case x if (x >= 0 && x < 10) => x + 48
-    case x if (x >= 10 && x < 16) => x + 87
+
+/** Translates a hexa value to the corresponding ASCII value
+   *
+   *  @param hex_value an hex value
+   *  @return an ASCII value
+   */
+def HexaToASCII(hex_value: Int): Int = hex_value match
+    case digit if 0 to 9 contains digit => digit + 48
+    case letter if 10 to 15 contains letter => letter + 87
     case _ => throw new Exception("Incorrect ASCII value, can't convert it to hexa")
 
-def xorChar(char_1: Char, char_2: Char): Int =
+/** Computes the xor of 2 hexa symbols
+   *
+   *  @param char_1 an hexa symbol
+   *  @param char_2 an hexa symbol
+   *  @return the computed xor
+   */
+def xorChars(char_1: Char, char_2: Char): Int =
     ASCIIToHexa(char_1) ^ ASCIIToHexa(char_2)
 
-def xorList(input_1: List[Char], input_2: List[Char]): List[Int] = (input_1, input_2) match
-    case (char_1 :: rest_1, char_2:: rest_2) => HexaToASCII(xorChar(char_1, char_2)) :: xorList(rest_1, rest_2) 
+/** Computes the xor of 2 hexa strings
+   *
+   *  @param string_1 a string of hexa symbols
+   *  @param string_2 a string of hexa symbols
+   *  @return the list of xor values
+   */
+def xorList(string_1: List[Char], string_2: List[Char]): List[Int] = (string_1, string_2) match
+    case (char_1 :: rest_1, char_2:: rest_2) => HexaToASCII(xorChars(char_1, char_2)) :: xorList(rest_1, rest_2) 
     case (char_1 :: rest_1, Nil) => throw new Exception("List size don't match")
     case (Nil, char_2 :: rest_2) => throw new Exception("List size don't match")
     case (Nil, Nil) => List()
 
 object Challenge_2 extends App {
-    val input_1 = readLine().toList
-    val input_2 = readLine().toList
+    println("Input string 1 :")
+    val string_1 = readLine()
+    println("Input string 2 :")
+    val string_2 = readLine()
 
-    for char <- xorList(input_1, input_2) do print(char.toChar) 
+    xorList(string_1.toList, string_2.toList).foreach(char => print(char.toChar)) 
     println
 }
